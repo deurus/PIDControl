@@ -125,3 +125,9 @@ ComplementaryFilter complementary(0.98);
 - `docs/FILTERS.md`
 - `docs/TCLAB_TEST.md`
 - `docs/TERMINOLOGIA.md`
+
+## License
+
+PIDControl is released under the MIT License.
+
+Copyright (c) 2026 Garikoitz Martinez.
