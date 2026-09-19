@@ -120,11 +120,13 @@ The library never auto-applies a proposed tuning. The user must apply it explici
 FOPDTModel model = stepTest.GetModel();
 PIDTuning tuning(model);
 
-PIDTuningResult pi  = tuning.IMC_PI();      // default lambda = 2*T0
+PIDTuningResult pi  = tuning.IMC_PI();      // default Tf = 2*T0
 PIDTuningResult pid = tuning.Lambda_PID();  // default Tf = 2*T0
 ```
 
-Available presets for `lambda/Tf`:
+Both tuning methods use `Tf` as the tuning parameter that determines the desired closed-loop response speed.
+
+Available presets for `Tf`:
 
 ```text
 AGGRESSIVE = T0
@@ -174,16 +176,26 @@ Output limits   0..100
 Sample time     100 ms
 ```
 
-A complete declaration can also be used when the configuration must be explicit:
+A complete declaration can also be used when the configuration must be explicit. Using a named variable for PV Tracking makes the final argument easier to understand:
 
 ```cpp
+const bool pvTracking = true;
+
 PIDControl pid(
     &PV, &OP, &SP,
     Kc, Ki, Kd,
     PIDType::PI_D,
     PIDAction::REVERSE,
-    true
+    pvTracking
 );
+```
+
+In this declaration:
+
+```text
+PIDType::PI_D          controller structure
+PIDAction::REVERSE     control action
+pvTracking = true      PV Tracking enabled
 ```
 
 Typical loop:
@@ -213,7 +225,7 @@ STEP(10,2,UP,POS,0.3,60,0.10,0.4,30,0,60,15,45,0,80,0,100)
 RELAY(10,0.5,3,CURRENT,15,20,60,15,48)
 ```
 
-Stored identification results can be reprinted while they remain in RAM:
+Stored identification results can be reprinted while they remain in memory:
 
 ```text
 IDENT
