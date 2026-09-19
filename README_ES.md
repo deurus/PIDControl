@@ -124,11 +124,13 @@ La librería nunca aplica automáticamente una sintonización calculada. El usua
 FOPDTModel model = stepTest.GetModel();
 PIDTuning tuning(model);
 
-PIDTuningResult pi  = tuning.IMC_PI();      // lambda por defecto = 2*T0
+PIDTuningResult pi  = tuning.IMC_PI();      // Tf por defecto = 2*T0
 PIDTuningResult pid = tuning.Lambda_PID();  // Tf por defecto = 2*T0
 ```
 
-Presets disponibles para `lambda/Tf`:
+Ambos métodos utilizan `Tf` como parámetro de sintonización para definir la velocidad deseada de la respuesta en lazo cerrado.
+
+Presets disponibles para `Tf`:
 
 ```text
 AGGRESSIVE = T0
@@ -178,16 +180,26 @@ Límites de salida   0..100
 Tiempo de muestreo  100 ms
 ```
 
-También puede utilizarse la declaración completa cuando queramos dejar toda la configuración de forma explícita:
+También puede utilizarse la declaración completa cuando queramos dejar toda la configuración de forma explícita. Para que el último parámetro se entienda mejor, podemos declarar previamente una variable con nombre para PV Tracking:
 
 ```cpp
+const bool pvTracking = true;
+
 PIDControl pid(
     &PV, &OP, &SP,
     Kc, Ki, Kd,
     PIDType::PI_D,
     PIDAction::REVERSE,
-    true
+    pvTracking
 );
+```
+
+En esta declaración:
+
+```text
+PIDType::PI_D          estructura del controlador
+PIDAction::REVERSE     acción de control
+pvTracking = true      PV Tracking activado
 ```
 
 Un `loop()` típico puede reducirse prácticamente a:
@@ -217,7 +229,7 @@ STEP(10,2,UP,POS,0.3,60,0.10,0.4,30,0,60,15,45,0,80,0,100)
 RELAY(10,0.5,3,CURRENT,15,20,60,15,48)
 ```
 
-Los resultados de identificación pueden volver a mostrarse mientras permanezcan almacenados en RAM:
+Los resultados de identificación pueden volver a mostrarse mientras permanezcan almacenados en memoria:
 
 ```text
 IDENT
